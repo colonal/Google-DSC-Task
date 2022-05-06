@@ -1,7 +1,11 @@
+import 'package:dsc_task/login_screen.dart';
+import 'package:dsc_task/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  final UserModel userModel;
+  const HomeScreen(this.userModel, {Key? key}) : super(key: key);
   static final List<String> images = [
     'https://images.unsplash.com/photo-1633177317976-3f9bc45e1d1d?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
     'https://images.unsplash.com/photo-1633113093730-47449a1a9c6e?ixid=MnwxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxMXx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
@@ -9,6 +13,13 @@ class HomeScreen extends StatelessWidget {
     'https://images.unsplash.com/photo-1633287387306-f08b4b3671c6?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxNHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
     'https://images.unsplash.com/photo-1633269540827-728aabbb7646?ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1OXx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   ];
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,67 +45,72 @@ class HomeScreen extends StatelessWidget {
       ),
       drawer: Drawer(
         child: Column(
-          children: const [
+          children: [
             UserAccountsDrawerHeader(
               accountName: Text(
-                "Mohammad Ebbeni",
-                style: TextStyle(
+                widget.userModel.name!,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                   color: Colors.white,
                 ),
               ),
               accountEmail: Text(
-                "mohmmadebbeni27@gmail.com",
-                style: TextStyle(
+                widget.userModel.email!,
+                style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 16,
                   color: Colors.white,
                 ),
               ),
-              currentAccountPicture: CircleAvatar(
+              currentAccountPicture: const CircleAvatar(
                 backgroundImage: NetworkImage(
                     'https://avatars.githubusercontent.com/u/64502335?v=4'),
               ),
-              otherAccountsPictures: <Widget>[
+              otherAccountsPictures: const <Widget>[
                 CircleAvatar(
                   backgroundImage: NetworkImage(
                       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHBj-LrXHsS-dprAlSuCegGuydxu-KdVwujRNLXkO6IBXo4_pm0j0C3-l-VBw_Jwh00hw&usqp=CAU'),
                 ),
               ],
             ),
-            ListTile(
+            const ListTile(
               title: Text("Sent"),
               leading: Icon(Icons.send),
             ),
-            Divider(
+            const Divider(
               thickness: 1,
             ),
-            ListTile(
+            const ListTile(
               title: Text("Inbox"),
               leading: Icon(Icons.inbox),
             ),
-            ListTile(
+            const ListTile(
               title: Text("Stared"),
               leading: Icon(Icons.star),
             ),
-            Divider(
+            const Divider(
               thickness: 1,
             ),
-            ListTile(
+            const ListTile(
               title: Text("Archive"),
               leading: Icon(Icons.archive),
             ),
-            ListTile(
+            const ListTile(
               title: Text("Chat"),
               leading: Icon(Icons.chat),
             ),
-            Divider(
+            const Divider(
               thickness: 1,
             ),
             ListTile(
-              title: Text("Log out"),
-              leading: Icon(Icons.logout),
+              title: const Text("Log out"),
+              leading: const Icon(Icons.logout),
+              onTap: () {
+                _auth.signOut();
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()));
+              },
             ),
           ],
         ),
@@ -104,15 +120,15 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: ListView(
           children: [
-            buildItemImage(images[0]),
+            buildItemImage(HomeScreen.images[0]),
             const Divider(thickness: 2),
-            buildItemImage(images[1]),
+            buildItemImage(HomeScreen.images[1]),
             const Divider(thickness: 2),
-            buildItemImage(images[2]),
+            buildItemImage(HomeScreen.images[2]),
             const Divider(thickness: 2),
-            buildItemImage(images[3]),
+            buildItemImage(HomeScreen.images[3]),
             const Divider(thickness: 2),
-            buildItemImage(images[4]),
+            buildItemImage(HomeScreen.images[4]),
           ],
         ),
       )),
