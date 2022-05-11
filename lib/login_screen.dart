@@ -33,108 +33,175 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Log in"),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: Image.network(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYFqufRoE50kdbNP20g4y_5xxaDehc1bCIOg&usqp=CAU"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                        labelText: "Email Address",
-                        border: OutlineInputBorder()),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return ("Please Enter Your Email");
-                      }
-
-                      if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                          .hasMatch(value)) {
-                        return ("Please Enter a valid email");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      emailController.text =
-                          value!; // GETTING the value of edit text
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: passController,
-                    decoration: const InputDecoration(
-                        labelText: "Password", border: OutlineInputBorder()),
-                    obscureText: true,
-                    validator: (value) {
-                      RegExp regex = RegExp(r'^.{6,}$');
-                      if (value!.isEmpty) {
-                        return ("Password is required for login");
-                      }
-                      if (!regex.hasMatch(value)) {
-                        return ("Enter Valid Password(Min. 6 Character)");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      passController.text = value!;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MaterialButton(
-                    onPressed: () =>
-                        signIn(emailController.text, passController.text),
-                    color: Colors.black,
-                    child: isLoding
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white),
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Colors.black.withOpacity(1),
+              Colors.black.withOpacity(0.8),
+            ])),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Bank.",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(.9),
+                            fontSize: 40,
                           ),
-                  ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 250,
+                            width: 250,
+                            child: Image.asset("assets/images/card.png"),
+                          ),
+                        ),
+                        buildTextField(
+                          "Email Address",
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return ("Please Enter Your Email");
+                            }
+
+                            if (!RegExp(
+                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                .hasMatch(value)) {
+                              return ("Please Enter a valid email");
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            emailController.text =
+                                value!; // GETTING the value of edit text
+                          },
+                        ),
+                        buildTextField(
+                          "Password",
+                          isPass: true,
+                          validator: (value) {
+                            RegExp regex = RegExp(r'^.{6,}$');
+                            if (value!.isEmpty) {
+                              return ("Password is required for login");
+                            }
+                            if (!regex.hasMatch(value)) {
+                              return ("Enter Valid Password(Min. 6 Character)");
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            passController.text = value!;
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.grey[700]!,
+                                    Colors.grey[900]!,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(4),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.white.withOpacity(0.3),
+                                      offset: const Offset(2, 3))
+                                ]),
+                            child: MaterialButton(
+                              onPressed: () => signIn(
+                                  emailController.text, passController.text),
+                              // color: Colors.black,
+                              child: isLoding
+                                  ? const CircularProgressIndicator()
+                                  : const Text(
+                                      "Login",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: RichText(
+                              text: TextSpan(
+                                  text: "Dont have an account? ",
+                                  style: const TextStyle(
+                                      color: Colors.grey, fontSize: 15),
+                                  children: [
+                                    TextSpan(
+                                        text: "Sign Up",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        const SignUpScreen()));
+                                          }),
+                                  ]),
+                            ),
+                          ),
+                        ),
+                      ]),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RichText(
-                    text: TextSpan(
-                        text: "Dont have an account? ",
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 15),
-                        children: [
-                          TextSpan(
-                              text: "Sign Up",
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 15,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) => const SignUpScreen()));
-                                }),
-                        ]),
-                  ),
-                ),
-              ]),
+              ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Padding buildTextField(String text,
+      {bool isPass = false,
+      String? Function(String?)? validator,
+      Function(String?)? onSaved}) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: TextFormField(
+        controller: emailController,
+        decoration: InputDecoration(
+          labelText: text,
+          labelStyle: TextStyle(color: Colors.grey[50]),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.white, width: 5),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide:
+                BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.white, width: 1),
+          ),
         ),
+        obscureText: isPass,
+        validator: validator,
+        onSaved: onSaved,
       ),
     );
   }

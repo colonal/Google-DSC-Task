@@ -1,10 +1,13 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen.dart';
 import 'package:dsc_task/login_screen.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import 'otp_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -33,188 +36,238 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sign Up"),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: Image.network(
-                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUZKmoD95W6yIrICkkXzSixS_RufP25ZYp9w&usqp=CAU"),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person),
-                        labelText: "Name",
-                        border: OutlineInputBorder()),
-                    validator: (value) {
-                      RegExp regex = RegExp(r'^.{4,}$');
-                      if (value!.isEmpty) {
-                        return ("First Name cannot be Empty");
-                      }
-                      if (!regex.hasMatch(value)) {
-                        return ("Enter Valid name(Min. 4 Character)");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      nameController.text = value!;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.phone),
-                      hintText: 'Enter a Phone Number',
-                      labelText: 'Phone',
+      body: Stack(
+        children: [
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+              Colors.black.withOpacity(1),
+              Colors.black.withOpacity(0.8),
+            ])),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(children: [
+                    SizedBox(
+                      height: 250,
+                      width: 250,
+                      child: Image.asset("assets/images/1.png"),
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return ("Please Enter Your Phone");
-                      }
-
-                      if (!RegExp(r"[0-9].{8,8}$").hasMatch(value)) {
-                        return ("Please Enter a valid Phone");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      passController.text =
-                          value!; // GETTING the value of edit text
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: emailController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.email),
-                      labelText: "Email Address",
-                      border: OutlineInputBorder(),
+                    buildTextField(
+                      text: "Name",
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Colors.grey[50],
+                      ),
+                      validator: (value) {
+                        RegExp regex = RegExp(r'^.{4,}$');
+                        if (value!.isEmpty) {
+                          return ("First Name cannot be Empty");
+                        }
+                        if (!regex.hasMatch(value)) {
+                          return ("Enter Valid name(Min. 4 Character)");
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        nameController.text = value!;
+                      },
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return ("Please Enter Your Email");
-                      }
+                    buildTextField(
+                      text: 'Phone',
+                      prefixIcon: Icon(
+                        Icons.phone,
+                        color: Colors.grey[50],
+                      ),
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return ("Please Enter Your Phone");
+                        }
 
-                      if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                          .hasMatch(value)) {
-                        return ("Please Enter a valid email");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      emailController.text =
-                          value!; // GETTING the value of edit text
-                    },
-                  ),
+                        if (!RegExp(r"[0-9].{8,8}$").hasMatch(value)) {
+                          return ("Please Enter a valid Phone");
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        passController.text =
+                            value!; // GETTING the value of edit text
+                      },
+                    ),
+                    buildTextField(
+                      text: "Email Address",
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: Colors.grey[50],
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return ("Please Enter Your Email");
+                        }
+
+                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                            .hasMatch(value)) {
+                          return ("Please Enter a valid email");
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        emailController.text =
+                            value!; // GETTING the value of edit text
+                      },
+                    ),
+                    buildTextField(
+                      text: "Password",
+                      prefixIcon: Icon(
+                        Icons.password,
+                        color: Colors.grey[50],
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      isPass: true,
+                      validator: (value) {
+                        RegExp regex = RegExp(r'^.{6,}$');
+                        if (value!.isEmpty) {
+                          return ("Password is required for login");
+                        }
+                        if (!regex.hasMatch(value)) {
+                          return ("Enter Valid Password(Min. 6 Character)");
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        passController.text = value!;
+                      },
+                    ),
+                    buildTextField(
+                      text: "RePassword",
+                      prefixIcon: Icon(
+                        Icons.password,
+                        color: Colors.grey[50],
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      isPass: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return ("Password is required for login");
+                        }
+                        if (passController.text != value) {
+                          return ("Not Match");
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        passController.text = value!;
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.grey[700]!,
+                                Colors.grey[900]!,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.white.withOpacity(0.3),
+                                  offset: const Offset(2, 3))
+                            ]),
+                        child: MaterialButton(
+                          onPressed: () => signUp(
+                              nameController.text,
+                              phoneController.text,
+                              emailController.text,
+                              passController.text),
+                          child: isLoding
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  "Sign Up",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RichText(
+                        text: TextSpan(
+                            text: "have an account? ",
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            ),
+                            children: [
+                              TextSpan(
+                                  text: "Login",
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const LoginScreen()));
+                                    }),
+                            ]),
+                      ),
+                    ),
+                  ]),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: passController,
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.password),
-                        labelText: "Password",
-                        border: OutlineInputBorder()),
-                    obscureText: true,
-                    validator: (value) {
-                      RegExp regex = RegExp(r'^.{6,}$');
-                      if (value!.isEmpty) {
-                        return ("Password is required for login");
-                      }
-                      if (!regex.hasMatch(value)) {
-                        return ("Enter Valid Password(Min. 6 Character)");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      passController.text = value!;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.password),
-                        labelText: "RePassword",
-                        border: OutlineInputBorder()),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return ("Password is required for login");
-                      }
-                      if (passController.text != value) {
-                        return ("Not Match");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      passController.text = value!;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MaterialButton(
-                    onPressed: () => signUp(
-                        nameController.text,
-                        phoneController.text,
-                        emailController.text,
-                        passController.text),
-                    color: Colors.black,
-                    child: isLoding
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                            "Sign Up",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: RichText(
-                    text: TextSpan(
-                        text: "have an account? ",
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 15),
-                        children: [
-                          TextSpan(
-                              text: "Login",
-                              style: const TextStyle(
-                                color: Colors.blue,
-                                fontSize: 15,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) => const LoginScreen()));
-                                }),
-                        ]),
-                  ),
-                ),
-              ]),
+              ),
             ),
           ),
-        ),
+        ],
       ),
+    );
+  }
+
+  Padding buildTextField(
+      {String? text,
+      Widget? prefixIcon,
+      bool isPass = false,
+      TextInputType? keyboardType,
+      String? Function(String?)? validator,
+      Function(String?)? onSaved}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+          controller: nameController,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            prefixIcon: prefixIcon,
+            prefixIconColor: Colors.grey[50],
+            labelText: text,
+            labelStyle: TextStyle(color: Colors.grey[50]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white, width: 5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide:
+                  BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white, width: 1),
+            ),
+          ),
+          obscureText: isPass,
+          validator: validator,
+          onSaved: onSaved),
     );
   }
 
@@ -282,13 +335,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
     userModel.uid = user.uid;
     userModel.name = nameController.text;
     userModel.phone = phoneController.text;
+    userModel.bin = genaret();
+    userModel.endDate = endDate();
+    userModel.money = 500.0;
 
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
 
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => HomeScreen(userModel)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => OTPScreen(auth: _auth, userModel: userModel)));
   }
+}
+
+String genaret() {
+  return random().toString() +
+      random().toString() +
+      random().toString() +
+      random().toString();
+}
+
+int random() {
+  return 1000 + Random().nextInt(9999 - 1000);
+}
+
+String endDate() {
+  String month = DateTime.now().month.toString().length == 1
+      ? "0${DateTime.now().month}"
+      : DateTime.now().month.toString();
+
+  int year = DateTime.now().year + 4;
+
+  return "$month/$year";
 }
