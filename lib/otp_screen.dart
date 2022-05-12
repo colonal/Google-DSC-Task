@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/home_screen1.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,7 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void dispose() {
     changeImageListen.cancel();
+    timer.cancel();
     super.dispose();
   }
 
@@ -122,11 +124,17 @@ class _OTPScreenState extends State<OTPScreen> {
                         setState(() {
                           isLogeing = !isLogeing;
                         });
-                        timer = Timer(const Duration(seconds: 3), () {
-                          setState(() {
-                            isLogeing = !isLogeing;
-                            isCheck = !isCheck;
-                          });
+
+                        submit();
+                        setState(() {
+                          isLogeing = !isLogeing;
+                          isCheck = !isCheck;
+                        });
+
+                        timer = Timer(const Duration(seconds: 1), () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) =>
+                                  HomeScreen1(userModel: widget.userModel)));
                         });
                       },
                       child: Container(
@@ -214,15 +222,13 @@ class _OTPScreenState extends State<OTPScreen> {
     );
   }
 
-  void submit() async {
+  Future<void> submit() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = widget.auth.currentUser;
     await firebaseFirestore
         .collection("users")
         .doc(user!.uid)
-        .set({"binCode": binCode});
-
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => HomeScreen(widget.userModel)));
+        .update({"bin": binCode});
+    widget.userModel.bin = binCode;
   }
 }

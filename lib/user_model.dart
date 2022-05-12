@@ -3,6 +3,7 @@ class UserModel {
   String? email;
   String? name;
   String? phone;
+  String? cardKey;
   String? bin;
   String? endDate;
   double? money;
@@ -14,6 +15,7 @@ class UserModel {
       this.phone,
       this.bin,
       this.endDate,
+      this.cardKey,
       this.money});
 
   // receiving data from server
@@ -26,6 +28,7 @@ class UserModel {
       bin: map['bin'],
       endDate: map['endDate'],
       money: map["money"],
+      cardKey: map["cardKey"],
     );
   }
 
@@ -39,6 +42,7 @@ class UserModel {
       'bin': bin,
       'endDate': endDate,
       "money": money,
+      "cardKey": cardKey,
     };
   }
 }

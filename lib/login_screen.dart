@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/home_screen1.dart';
 import 'package:dsc_task/signup_screen.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,6 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         buildTextField(
                           "Email Address",
+                          controller: emailController,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return ("Please Enter Your Email");
@@ -90,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         buildTextField(
                           "Password",
+                          controller: passController,
                           isPass: true,
                           validator: (value) {
                             RegExp regex = RegExp(r'^.{6,}$');
@@ -175,13 +178,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Padding buildTextField(String text,
-      {bool isPass = false,
+      {TextEditingController? controller,
+      bool isPass = false,
       String? Function(String?)? validator,
       Function(String?)? onSaved}) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextFormField(
-        controller: emailController,
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: text,
           labelStyle: TextStyle(color: Colors.grey[50]),
@@ -217,8 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final get = FirebaseFirestore.instance;
         userModel = UserModel.fromMap(
             await get.collection("users").doc(uid.user!.uid).get());
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => HomeScreen(userModel)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => HomeScreen1(userModel: userModel)));
       }).catchError((error) {
         try {
           switch (error.code) {

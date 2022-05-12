@@ -60,6 +60,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Image.asset("assets/images/1.png"),
                     ),
                     buildTextField(
+                      controller: nameController,
                       text: "Name",
                       prefixIcon: Icon(
                         Icons.person,
@@ -80,6 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     buildTextField(
+                      controller: phoneController,
                       text: 'Phone',
                       prefixIcon: Icon(
                         Icons.phone,
@@ -102,6 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     buildTextField(
+                      controller: emailController,
                       text: "Email Address",
                       prefixIcon: Icon(
                         Icons.email,
@@ -125,6 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     buildTextField(
+                      controller: passController,
                       text: "Password",
                       prefixIcon: Icon(
                         Icons.password,
@@ -235,7 +239,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Padding buildTextField(
-      {String? text,
+      {TextEditingController? controller,
+      String? text,
       Widget? prefixIcon,
       bool isPass = false,
       TextInputType? keyboardType,
@@ -244,8 +249,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-          controller: nameController,
+          controller: controller,
           keyboardType: keyboardType,
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             prefixIconColor: Colors.grey[50],
@@ -335,7 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     userModel.uid = user.uid;
     userModel.name = nameController.text;
     userModel.phone = phoneController.text;
-    userModel.bin = genaret();
+    userModel.cardKey = genaret();
     userModel.endDate = endDate();
     userModel.money = 500.0;
 

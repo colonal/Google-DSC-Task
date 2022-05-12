@@ -1,8 +1,16 @@
+import 'package:dsc_task/prophail_screen.dart';
+import 'package:dsc_task/user_model.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen1 extends StatelessWidget {
-  const HomeScreen1({Key? key}) : super(key: key);
+class HomeScreen1 extends StatefulWidget {
+  final UserModel userModel;
+  const HomeScreen1({required this.userModel, Key? key}) : super(key: key);
 
+  @override
+  State<HomeScreen1> createState() => _HomeScreen1State();
+}
+
+class _HomeScreen1State extends State<HomeScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,14 +60,24 @@ class HomeScreen1 extends StatelessWidget {
                           ),
                         ],
                       ),
-                      CircleAvatar(
-                        maxRadius: 30,
-                        child: Text(
-                          "R",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(.9),
-                            fontSize: 30,
+                      Hero(
+                        tag: widget.userModel.cardKey!,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ProfailScreen(
+                                    userModel: widget.userModel)));
+                          },
+                          child: CircleAvatar(
+                            maxRadius: 30,
+                            child: Text(
+                              widget.userModel.name![0],
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(.9),
+                                fontSize: 30,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -90,7 +108,7 @@ class HomeScreen1 extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Rakib Kowshar",
+                              widget.userModel.name!,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: Colors.black.withOpacity(.9),
@@ -117,7 +135,7 @@ class HomeScreen1 extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "06/2025",
+                                  widget.userModel.endDate!,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(.7),
@@ -126,7 +144,7 @@ class HomeScreen1 extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "500.0\$",
+                                  "${widget.userModel.money!}\$",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(.7),
@@ -137,7 +155,7 @@ class HomeScreen1 extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              "0364\t8970\t1480\t9710",
+                              formatcardKeyShow(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: Colors.black.withOpacity(.9),
@@ -241,5 +259,15 @@ class HomeScreen1 extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String formatcardKeyShow() {
+    List l = widget.userModel.cardKey!.split("");
+    String newKey = '';
+    for (int i = 0; i < l.length; ++i) {
+      newKey += (i % 4 == 0 && i != 0) ? "\t${l[i]}" : l[i];
+    }
+
+    return newKey;
   }
 }
