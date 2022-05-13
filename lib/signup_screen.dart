@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dsc_task/login_screen.dart';
+import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -31,6 +32,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void initState() {
     super.initState();
     _auth = FirebaseAuth.instance;
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    passController.dispose();
+    super.dispose();
   }
 
   @override
@@ -99,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        passController.text =
+                        phoneController.text =
                             value!; // GETTING the value of edit text
                       },
                     ),
@@ -286,7 +296,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => postDetailsToFirestore())
           .catchError((error, stackTrace) {
-        switch (error.code) {
+        switch (error.toString()) {
           case "invalid-email":
             errorMessage = "Your email address appears to be malformed.";
             break;
@@ -305,11 +315,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           case "operation-not-allowed":
             errorMessage = "Signing in with Email and Password is not enabled.";
             break;
+          case "The email address is already in use by another account.":
+            errorMessage =
+                "The email address is already in use by another account.";
+            break;
           default:
             errorMessage = "An undefined Error happened.";
         }
         // Fluttertoast.showToast(msg: errorMessage!);
-        print(error.code);
+        print("error: " + error.toString());
 
         setState(() {
           isLoding = !isLoding;
@@ -329,29 +343,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // calling our firestore
     // calling our user model
     // sedning these values
-
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
-
-    UserModel userModel = UserModel();
-
-    // writing all the values
-    print("nameController.text: ${nameController.text}");
-    userModel.email = user!.email;
-    userModel.uid = user.uid;
-    userModel.name = nameController.text;
-    userModel.phone = phoneController.text;
-    userModel.cardKey = genaret();
-    userModel.endDate = endDate();
-    userModel.money = 500.0;
-
+    try {
+      // writing all the values
+      userModel = UserModel(
+        email: user!.email,
+        uid: user.uid,
+        name: nameController.text,
+        phone: phoneController.text,
+        cardKey: genaret(),
+        endDate: endDate(),
+        money: 500.0,
+        block: false,
+      );
+    } catch (e) {
+      print("E: $e");
+    }
     await firebaseFirestore
         .collection("users")
-        .doc(user.uid)
-        .set(userModel.toMap());
+        .doc(user!.uid)
+        .set(userModel!.toMap());
 
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => OTPScreen(auth: _auth, userModel: userModel)));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const OTPScreen()));
   }
 }
 

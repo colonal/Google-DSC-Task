@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dsc_task/home_screen1.dart';
+import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
-import 'home_screen.dart';
-
 class OTPScreen extends StatefulWidget {
-  final FirebaseAuth auth;
-  final UserModel userModel;
-  const OTPScreen({required this.auth, required this.userModel, Key? key})
+  final bool isUpdate;
+  final bool screenUpdate;
+
+  const OTPScreen({this.isUpdate = false, this.screenUpdate = false, Key? key})
       : super(key: key);
 
   @override
@@ -27,12 +27,14 @@ class _OTPScreenState extends State<OTPScreen> {
   ];
   bool isLogeing = false;
   bool isCheck = false;
+  bool error = false;
   int selectImage = 0;
   late Timer timer;
   String binCode = "";
-  final changeImage = Stream.periodic(const Duration(seconds: 5), (index) {
-    // debugPrint("$index");
-  });
+  late bool isUpdate;
+  late bool screenUpdate;
+
+  final changeImage = Stream.periodic(const Duration(seconds: 5), (index) {});
   late StreamSubscription changeImageListen;
   @override
   void initState() {
@@ -44,6 +46,8 @@ class _OTPScreenState extends State<OTPScreen> {
         selectImage = 0;
       }
     });
+    isUpdate = widget.isUpdate;
+    screenUpdate = widget.screenUpdate;
     super.initState();
   }
 
@@ -108,7 +112,11 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      "Please enter the 4 digit Number",
+                      widget.isUpdate
+                          ? screenUpdate
+                              ? "Please enter new bin code"
+                              : "Please enter Old bin code"
+                          : "Please enter the 4 digit Number",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey[600],
@@ -118,24 +126,39 @@ class _OTPScreenState extends State<OTPScreen> {
                     const SizedBox(height: 30),
                     verification(),
                     const SizedBox(height: 30),
+                    if (error)
+                      Text(
+                        "Error try again",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.redAccent[200],
+                          fontSize: 15,
+                        ),
+                      ),
                     const SizedBox(height: 50),
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        print("onTap");
                         setState(() {
                           isLogeing = !isLogeing;
+
+                          error = false;
                         });
 
-                        submit();
+                        await submit();
                         setState(() {
                           isLogeing = !isLogeing;
                           isCheck = !isCheck;
                         });
-
-                        timer = Timer(const Duration(seconds: 1), () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) =>
-                                  HomeScreen1(userModel: widget.userModel)));
-                        });
+                        print(!error);
+                        print(screenUpdate);
+                        if (!error) {
+                          timer = Timer(const Duration(seconds: 1), () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_) => const HomeScreen1()));
+                          });
+                        }
                       },
                       child: Container(
                         height: 50,
@@ -205,6 +228,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Widget verification() {
     return OtpTextField(
+      autoFocus: true,
+
       numberOfFields: 4,
       borderColor: const Color(0xFF512DA8),
       //set to true to show as box or false to show as dash
@@ -224,11 +249,31 @@ class _OTPScreenState extends State<OTPScreen> {
 
   Future<void> submit() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    User? user = widget.auth.currentUser;
-    await firebaseFirestore
-        .collection("users")
-        .doc(user!.uid)
-        .update({"bin": binCode});
-    widget.userModel.bin = binCode;
+    User? user = FirebaseAuth.instance.currentUser;
+    if (isUpdate && !screenUpdate) {
+      UserModel _user = userModel = UserModel.fromMap(
+          await firebaseFirestore.collection("users").doc(user!.uid).get());
+      if (_user.bin == binCode) {
+        // screenUpdate = !screenUpdate;
+        // isCheck = !isCheck;
+        timer = Timer(const Duration(seconds: 1), () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => const OTPScreen(
+                    isUpdate: true,
+                    screenUpdate: true,
+                  )));
+        });
+      } else {
+        setState(() {
+          error = !error;
+        });
+      }
+    } else {
+      await firebaseFirestore
+          .collection("users")
+          .doc(user!.uid)
+          .update({"bin": binCode});
+      userModel!.bin = binCode;
+    }
   }
 }

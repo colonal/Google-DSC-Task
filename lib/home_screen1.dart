@@ -1,16 +1,30 @@
-import 'package:dsc_task/prophail_screen.dart';
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/add_frind_screen.dart';
+import 'package:dsc_task/otp_screen.dart';
+import 'package:dsc_task/profile_screen.dart';
+import 'package:dsc_task/setting_screen.dart';
+import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen1 extends StatefulWidget {
-  final UserModel userModel;
-  const HomeScreen1({required this.userModel, Key? key}) : super(key: key);
+  // UserModel userModel;
+  const HomeScreen1({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen1> createState() => _HomeScreen1State();
 }
 
 class _HomeScreen1State extends State<HomeScreen1> {
+  @override
+  void initState() {
+    _gitFrinds();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +45,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
           SafeArea(
               child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,7 +56,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hello Rakib",
+                            "Hello ${userModel!.name!.split(" ")[0]}",
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               color: Colors.white.withOpacity(.9),
@@ -61,17 +75,16 @@ class _HomeScreen1State extends State<HomeScreen1> {
                         ],
                       ),
                       Hero(
-                        tag: widget.userModel.cardKey!,
+                        tag: userModel!.cardKey!,
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_) => ProfailScreen(
-                                    userModel: widget.userModel)));
+                          onTap: () async {
+                            await Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => const ProfailScreen()));
                           },
                           child: CircleAvatar(
                             maxRadius: 30,
                             child: Text(
-                              widget.userModel.name![0],
+                              userModel!.name![0],
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: Colors.white.withOpacity(.9),
@@ -107,24 +120,36 @@ class _HomeScreen1State extends State<HomeScreen1> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              widget.userModel.name!,
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Colors.black.withOpacity(.9),
-                                fontSize: 18,
-                                letterSpacing: 1.5,
+                            Expanded(
+                              child: Text(
+                                userModel!.name!,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color: Colors.black.withOpacity(.9),
+                                  fontSize: 18,
+                                  letterSpacing: 1.5,
+                                ),
                               ),
                             ),
-                            Text(
-                              "USD",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Colors.black.withOpacity(.9),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
-                              ),
+                            Row(
+                              children: [
+                                if (userModel!.block!)
+                                  Icon(
+                                    Icons.block,
+                                    color: Colors.redAccent[400],
+                                  ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  "USD",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    color: Colors.black.withOpacity(.9),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -135,7 +160,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  widget.userModel.endDate!,
+                                  userModel!.endDate!,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(.7),
@@ -144,7 +169,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
                                   ),
                                 ),
                                 Text(
-                                  "${widget.userModel.money!}\$",
+                                  "${userModel!.money!}\$",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(.7),
@@ -181,21 +206,46 @@ class _HomeScreen1State extends State<HomeScreen1> {
                   ),
                   const SizedBox(height: 10),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.add,
-                            color: Color.fromARGB(255, 49, 20, 47),
-                            size: 30,
+                      InkWell(
+                        onTap: () async {
+                          await Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const AddFrindScreen()));
+                          print("setState");
+                          Timer(const Duration(milliseconds: 100), () {
+                            setState(() {});
+                            setState(() {});
+                          });
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          alignment: Alignment.topCenter,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.add,
+                              color: Color.fromARGB(255, 49, 20, 47),
+                              size: 30,
+                            ),
                           ),
                         ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                            itemCount: frinds!.length,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 10),
+                            itemBuilder: (_, index) =>
+                                _buildFrind(frinds![index])),
                       )
                     ],
                   ),
@@ -221,7 +271,12 @@ class _HomeScreen1State extends State<HomeScreen1> {
                         color: Colors.white),
                     trailing: const Icon(Icons.keyboard_arrow_right_outlined,
                         color: Colors.white),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => const OTPScreen(
+                                isUpdate: true,
+                              )));
+                    },
                   ),
                   Divider(color: Colors.grey.withOpacity(0.7), height: 2),
                   ListTile(
@@ -235,7 +290,9 @@ class _HomeScreen1State extends State<HomeScreen1> {
                     leading: const Icon(Icons.block, color: Colors.white),
                     trailing: const Icon(Icons.keyboard_arrow_right_outlined,
                         color: Colors.white),
-                    onTap: () {},
+                    onTap: () {
+                      _displayDialog(context);
+                    },
                   ),
                   Divider(color: Colors.grey.withOpacity(0.7), height: 2),
                   ListTile(
@@ -249,7 +306,10 @@ class _HomeScreen1State extends State<HomeScreen1> {
                     leading: const Icon(Icons.settings, color: Colors.white),
                     trailing: const Icon(Icons.keyboard_arrow_right_outlined,
                         color: Colors.white),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => const SettingScreen()));
+                    },
                   ),
                   Divider(color: Colors.grey.withOpacity(0.7), height: 2),
                 ],
@@ -262,12 +322,103 @@ class _HomeScreen1State extends State<HomeScreen1> {
   }
 
   String formatcardKeyShow() {
-    List l = widget.userModel.cardKey!.split("");
+    List l = userModel!.cardKey!.split("");
     String newKey = '';
     for (int i = 0; i < l.length; ++i) {
       newKey += (i % 4 == 0 && i != 0) ? "\t${l[i]}" : l[i];
     }
 
     return newKey;
+  }
+
+  _displayDialog(BuildContext context) async {
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel"),
+      onPressed: () => Navigator.of(context).pop(false),
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Continue"),
+      onPressed: () => Navigator.of(context).pop(true),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Block"),
+      content: const Text("Are you sure that the bank card is blocked ?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    bool? isBlock = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+
+    if (isBlock!) {
+      FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+      await firebaseFirestore
+          .collection("users")
+          .doc(userModel!.uid)
+          .update({"block": !userModel!.block!});
+      userModel!.block = !userModel!.block!;
+      setState(() {});
+    }
+  }
+
+  _buildFrind(Frinds frind) {
+    return Column(
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Center(
+            child: Text(
+              frind.name!.split(" ")[0][0],
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.black.withOpacity(.9),
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            frind.name!.split(" ")[0],
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Colors.white.withOpacity(.9),
+              fontSize: 14,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  void _gitFrinds() async {
+    final _firestore = FirebaseFirestore.instance;
+    await _firestore
+        .collection("users")
+        .doc(userModel!.uid)
+        .collection("frind")
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        value.docs.forEach(((element) async {
+          frinds!.add(Frinds.fromMap(element));
+        }));
+      }
+      setState(() {});
+    });
   }
 }

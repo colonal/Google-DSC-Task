@@ -6,6 +6,7 @@ class UserModel {
   String? cardKey;
   String? bin;
   String? endDate;
+  bool? block;
   double? money;
 
   UserModel(
@@ -16,20 +17,21 @@ class UserModel {
       this.bin,
       this.endDate,
       this.cardKey,
+      this.block,
       this.money});
 
   // receiving data from server
   factory UserModel.fromMap(map) {
     return UserModel(
-      uid: map['uid'],
-      email: map['email'],
-      name: map['name'],
-      phone: map['phone'],
-      bin: map['bin'],
-      endDate: map['endDate'],
-      money: map["money"],
-      cardKey: map["cardKey"],
-    );
+        uid: map['uid'],
+        email: map['email'],
+        name: map['name'],
+        phone: map['phone'],
+        bin: map['bin'],
+        endDate: map['endDate'],
+        money: map["money"],
+        cardKey: map["cardKey"],
+        block: map["block"]);
   }
 
   // sending data to our server
@@ -42,6 +44,43 @@ class UserModel {
       'bin': bin,
       'endDate': endDate,
       "money": money,
+      "cardKey": cardKey,
+      "block": block,
+    };
+  }
+
+  UserModel.update(UserModel u) {
+    uid = u.uid;
+    name = u.name;
+    email = u.email;
+    phone = u.phone;
+    bin = u.bin;
+    endDate = u.endDate;
+    money = u.money;
+    cardKey = u.cardKey;
+    block = u.block;
+  }
+}
+
+class Frinds {
+  String? uid;
+  String? email;
+  String? name;
+  String? cardKey;
+  Frinds({this.name, this.cardKey, this.email, this.uid});
+  factory Frinds.fromMap(map, {String? name}) {
+    return Frinds(
+      uid: map['uid'],
+      email: map['email'],
+      name: name ?? map['name'],
+      cardKey: map["cardKey"],
+    );
+  }
+  Map<String, dynamic> toMap({String? namee}) {
+    return {
+      'uid': uid,
+      'email': email,
+      'name': namee ?? name,
       "cardKey": cardKey,
     };
   }

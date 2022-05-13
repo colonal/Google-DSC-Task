@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dsc_task/home_screen1.dart';
 import 'package:dsc_task/signup_screen.dart';
+import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -19,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
-  UserModel userModel = UserModel();
+  // UserModel userModel = UserModel();
 
   bool isLoding = false;
 
@@ -71,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         buildTextField(
-                          "Email Address",
+                          text: "Email Address",
+                          keyboardType: TextInputType.emailAddress,
                           controller: emailController,
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -91,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         buildTextField(
-                          "Password",
+                          text: "Password",
+                          keyboardType: TextInputType.visiblePassword,
                           controller: passController,
                           isPass: true,
                           validator: (value) {
@@ -177,37 +180,42 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Padding buildTextField(String text,
+  Padding buildTextField(
       {TextEditingController? controller,
+      String? text,
+      Widget? prefixIcon,
       bool isPass = false,
+      TextInputType? keyboardType,
       String? Function(String?)? validator,
       Function(String?)? onSaved}) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        controller: controller,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: text,
-          labelStyle: TextStyle(color: Colors.grey[50]),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.white, width: 5),
+          controller: controller,
+          keyboardType: keyboardType,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            prefixIcon: prefixIcon,
+            prefixIconColor: Colors.grey[50],
+            labelText: text,
+            labelStyle: TextStyle(color: Colors.grey[50]),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white, width: 5),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide:
+                  BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white, width: 1),
+            ),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide:
-                BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.white, width: 1),
-          ),
-        ),
-        obscureText: isPass,
-        validator: validator,
-        onSaved: onSaved,
-      ),
+          obscureText: isPass,
+          validator: validator,
+          onSaved: onSaved),
     );
   }
 
@@ -222,8 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
         final get = FirebaseFirestore.instance;
         userModel = UserModel.fromMap(
             await get.collection("users").doc(uid.user!.uid).get());
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => HomeScreen1(userModel: userModel)));
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => const HomeScreen1()));
       }).catchError((error) {
         try {
           switch (error.code) {
