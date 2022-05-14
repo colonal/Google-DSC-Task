@@ -85,3 +85,30 @@ class Frinds {
     };
   }
 }
+
+class Invoice {
+  String? uid;
+  String? name;
+  String? money;
+  String? date;
+  String? state;
+  Invoice({this.uid, this.name, this.money, this.date, this.state});
+  factory Invoice.fromMap(map) {
+    return Invoice(
+      uid: map["uid"],
+      name: map["name"],
+      money: map["money"],
+      date: map["date"],
+      state: map["state"],
+    );
+  }
+  Map<String, dynamic> toMap() {
+    return {
+      'uid': uid,
+      'money': money,
+      'name': name,
+      "date": date,
+      "state": state,
+    };
+  }
+}

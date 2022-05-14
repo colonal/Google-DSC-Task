@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/home_screen1.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,12 @@ class _AddFrindScreenState extends State<AddFrindScreen> {
                         IconButton(
                           icon: Icon(Icons.arrow_back_ios_new_outlined,
                               color: Colors.white.withOpacity(0.6)),
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () {
+                            // Navigator.of(context)
+                            //   .pushReplacement(MaterialPageRoute(
+                            //       builder: (_) => const HomeScreen1()));
+                            Navigator.of(context).pop();
+                          },
                         ),
                         Text(
                           "Add Frind",
@@ -257,6 +263,8 @@ class _AddFrindScreenState extends State<AddFrindScreen> {
           }),
         );
         Navigator.of(context).pop();
+        // Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(builder: (_) => const HomeScreen1()));
       } else {
         setState(() {
           error = true;
