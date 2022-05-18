@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/invoice_screen.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:flutter/material.dart';
@@ -211,8 +212,10 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
           "name": widget.frind.name,
           "date": date,
           "money": "-${moneyController.text}",
+          "cardKey": widget.frind.cardKey,
           "state": "Send",
         });
+        // invoice!.add(myInvoice);
         await _firestore
             .collection("users")
             .doc(userModel!.uid)
@@ -225,6 +228,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
           "name": userModel!.name,
           "date": date,
           "money": "+${moneyController.text}",
+          "cardKey": userModel!.cardKey,
           "state": "Recepion"
         });
         await _firestore
@@ -235,14 +239,9 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
             .set(frindInvoice.toMap());
 
         userModel!.money = my;
-        SnackBar snackBar = SnackBar(
-            backgroundColor: Colors.greenAccent.withOpacity(0.8),
-            content: const Text(
-              "Done Send",
-              textAlign: TextAlign.center,
-            ));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.pop(context);
+        invoices!.add(myInvoice);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (_) => InvoiceScreen(invoice: myInvoice)));
       } catch (_) {
         SnackBar snackBar = SnackBar(
             backgroundColor: Colors.redAccent.withOpacity(0.8),

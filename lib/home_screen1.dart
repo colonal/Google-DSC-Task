@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dsc_task/add_frind_screen.dart';
+import 'package:dsc_task/auth_bin_screen.dart';
+import 'package:dsc_task/invoice%20_hstory_screen.dart';
 import 'package:dsc_task/otp_screen.dart';
 import 'package:dsc_task/profile_screen.dart';
 import 'package:dsc_task/send_money_screen.dart';
@@ -25,6 +27,7 @@ class _HomeScreen1State extends State<HomeScreen1> {
   @override
   void initState() {
     _gitFrinds();
+    _gitInvoice();
     super.initState();
   }
 
@@ -228,7 +231,8 @@ class _HomeScreen1State extends State<HomeScreen1> {
                           onTap: () async {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(
-                                    builder: (_) => const AddFrindScreen()))
+                              builder: (_) => const AddFrindScreen(),
+                            ))
                                 .then((value) {
                               _gitFrinds();
                             });
@@ -300,6 +304,24 @@ class _HomeScreen1State extends State<HomeScreen1> {
                             builder: (_) => const OTPScreen(
                                   isUpdate: true,
                                 )));
+                      },
+                    ),
+                    Divider(color: Colors.grey.withOpacity(0.7), height: 2),
+                    ListTile(
+                      title: Text(
+                        "Invoices History",
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(1),
+                          fontSize: 15,
+                        ),
+                      ),
+                      leading: const Icon(Icons.notifications_none_rounded,
+                          color: Colors.white),
+                      trailing: const Icon(Icons.keyboard_arrow_right_outlined,
+                          color: Colors.white),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const InvoicesHistoryScreen()));
                       },
                     ),
                     Divider(color: Colors.grey.withOpacity(0.7), height: 2),
@@ -400,7 +422,9 @@ class _HomeScreen1State extends State<HomeScreen1> {
       onTap: () {
         Navigator.of(context)
             .push(MaterialPageRoute(
-                builder: (_) => SendMoneyScreen(frind: frind)))
+          builder: (_) =>
+              AuthBinScreen(frind: frind), // SendMoneyScreen(frind: frind),
+        ))
             .then((value) {
           setState(() {});
         });
@@ -466,8 +490,24 @@ class _HomeScreen1State extends State<HomeScreen1> {
         }));
       }
     });
+    await _firestore
+        .collection("users")
+        .doc(userModel!.uid)
+        .collection("invoice")
+        .orderBy('date', descending: false)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        invoices?.clear();
+        value.docs.forEach(((element) async {
+          invoices!.add(Invoice.fromMap(element));
+        }));
+      }
+    });
     setState(() {
       isLoding = !isLoding;
     });
   }
+
+  void _gitInvoice() async {}
 }

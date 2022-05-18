@@ -29,7 +29,7 @@ class _OTPScreenState extends State<OTPScreen> {
   bool isCheck = false;
   bool error = false;
   int selectImage = 0;
-  late Timer timer;
+  Timer? timer;
   String binCode = "";
   late bool isUpdate;
   late bool screenUpdate;
@@ -54,7 +54,7 @@ class _OTPScreenState extends State<OTPScreen> {
   @override
   void dispose() {
     changeImageListen.cancel();
-    timer.cancel();
+    if (timer != null) timer!.cancel();
     super.dispose();
   }
 

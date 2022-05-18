@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? uid;
   String? email;
@@ -91,8 +93,10 @@ class Invoice {
   String? name;
   String? money;
   String? date;
+  String? cardKey;
   String? state;
-  Invoice({this.uid, this.name, this.money, this.date, this.state});
+  Invoice(
+      {this.uid, this.name, this.money, this.date, this.state, this.cardKey});
   factory Invoice.fromMap(map) {
     return Invoice(
       uid: map["uid"],
@@ -100,6 +104,7 @@ class Invoice {
       money: map["money"],
       date: map["date"],
       state: map["state"],
+      cardKey: map["cardKey"],
     );
   }
   Map<String, dynamic> toMap() {
@@ -109,6 +114,7 @@ class Invoice {
       'name': name,
       "date": date,
       "state": state,
+      "cardKey": cardKey,
     };
   }
 }

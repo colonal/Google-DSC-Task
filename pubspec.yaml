@@ -27,15 +27,17 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  charts_flutter: ^0.12.0
   cloud_firestore: ^3.1.13
   cupertino_icons: ^1.0.2
   firebase_auth: ^3.3.16
   firebase_auth_desktop: ^0.1.2
   firebase_core: ^1.16.0
+  firebase_core_desktop: ^0.1.1-dev.1
   flutter:
     sdk: flutter
   flutter_otp_text_field: ^1.0.1
-  # flutter_placeholder_textlines: ^1.1.2
+
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -56,6 +58,7 @@ flutter:
     - assets/images/card.png
     - assets/images/card1.png
     - assets/images/1.png
+    - assets/images/success.gif
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
