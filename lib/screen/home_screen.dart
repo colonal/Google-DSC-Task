@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/add_frind_screen.dart';
-import 'package:dsc_task/auth_bin_screen.dart';
-import 'package:dsc_task/invoice%20_hstory_screen.dart';
-import 'package:dsc_task/otp_screen.dart';
-import 'package:dsc_task/profile_screen.dart';
-import 'package:dsc_task/send_money_screen.dart';
-import 'package:dsc_task/setting_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import 'add_frind_screen.dart';
+import 'auth_bin_screen.dart';
+import 'invoice%20_hstory_screen.dart';
+import 'otp_screen.dart';
+import 'profile_screen.dart';
+import 'see_all_screen.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   // UserModel userModel;
@@ -28,8 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final _firestore = FirebaseFirestore.instance;
   @override
   void initState() {
-    _gitFrinds();
+    setState(() {
+      isLoding = !isLoding;
+    });
+    _gitFrinds().then((value) => _gitInvoice().then((value) => setState(() {
+          isLoding = !isLoding;
+        })));
     _gitInvoice();
+
     super.initState();
   }
 
@@ -43,10 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.white,
           backgroundColor: Colors.black,
           onRefresh: () async {
-            print("onRefresh");
-
-            _gitFrinds();
-            // setState(() {});
+            onRefresh();
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -132,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.black.withOpacity(.9),
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   letterSpacing: 1.5,
                                 ),
                               ),
@@ -166,16 +169,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  userModel!.endDate!,
+                                  "\$ ${userModel!.money!}",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
-                                    color: Colors.black.withOpacity(.7),
-                                    fontSize: 18,
+                                    color: Colors.black.withOpacity(.9),
+                                    fontSize: 30,
                                     letterSpacing: 1.5,
                                   ),
                                 ),
                                 Text(
-                                  "${userModel!.money!}\$",
+                                  userModel!.endDate!,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     color: Colors.black.withOpacity(.7),
@@ -189,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               formatcardKeyShow(),
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                color: Colors.black.withOpacity(.9),
+                                color: Colors.black.withOpacity(.8),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
                                 height: 2,
@@ -202,13 +205,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 25),
-                  Text(
-                    "Send MoneyTo",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(1),
-                      fontSize: 18,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Send MoneyTo",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(1),
+                          fontSize: 18,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (_) => const SeeAllScreen()))
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: Text(
+                          "see all",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -330,18 +356,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   Divider(color: Colors.grey.withOpacity(0.7), height: 2),
                   ListTile(
                     title: Text(
-                      "Settings",
+                      "Log out",
                       style: TextStyle(
-                        color: Colors.white.withOpacity(1),
+                        color: Colors.redAccent.withOpacity(1),
                         fontSize: 15,
                       ),
                     ),
-                    leading: const Icon(Icons.settings, color: Colors.white),
-                    trailing: const Icon(Icons.keyboard_arrow_right_outlined,
-                        color: Colors.white),
+                    leading: const Icon(
+                      Icons.logout,
+                      color: Colors.redAccent,
+                    ),
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => const SettingScreen()));
+                      FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (_) => const LoginScreen()));
                     },
                   ),
                   Divider(color: Colors.grey.withOpacity(0.7), height: 2),
@@ -404,6 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _buildFrind(Frinds frind) {
+    int color = int.parse("0xFF${frind.cardKey!.substring(0, 6)}");
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -421,15 +450,24 @@ class _HomeScreenState extends State<HomeScreen> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Color(color).withOpacity(0.5),
+                ],
+              ),
             ),
             child: Center(
               child: Text(
                 frind.name!.split(" ")[0][0],
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                  color: Colors.black.withOpacity(.9),
+                  color: Colors.black.withOpacity(1),
+                  fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
               ),
@@ -450,16 +488,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _getData() async {
+  void onRefresh() async {
+    print("onRefresh");
+    setState(() {
+      isLoding = !isLoding;
+    });
+    await _getData();
+    await _gitFrinds();
+    await _gitInvoice();
+    setState(() {
+      isLoding = !isLoding;
+    });
+  }
+
+  Future<void> _getData() async {
     userModel = UserModel.fromMap(
         await _firestore.collection("users").doc(userModel!.uid).get());
   }
 
-  void _gitFrinds() async {
-    setState(() {
-      isLoding = !isLoding;
-    });
-
+  Future<void> _gitFrinds() async {
     userModel = UserModel.fromMap(
         await _firestore.collection("users").doc(userModel!.uid).get());
 
@@ -476,6 +523,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }));
       }
     });
+  }
+
+  Future<void> _gitInvoice() async {
     await _firestore
         .collection("users")
         .doc(userModel!.uid)
@@ -490,10 +540,5 @@ class _HomeScreenState extends State<HomeScreen> {
         }));
       }
     });
-    setState(() {
-      isLoding = !isLoding;
-    });
   }
-
-  void _gitInvoice() async {}
 }

@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:flutter/material.dart';
 
-import 'add_frind_screen.dart';
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 import 'send_money_screen.dart';
 
 class AuthBinScreen extends StatefulWidget {

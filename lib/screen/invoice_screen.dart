@@ -1,7 +1,7 @@
-import 'package:dsc_task/user_model.dart';
+import '../model/user_model.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 
 class InvoiceScreen extends StatefulWidget {
   final Invoice invoice;

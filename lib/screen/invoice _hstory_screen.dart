@@ -3,9 +3,9 @@
 import 'package:dsc_task/user.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
-import 'charts_widget.dart';
-import 'user_model.dart';
+import '../widget/background_widget.dart';
+import '../widget/charts_widget.dart';
+import '../model/user_model.dart';
 
 class InvoicesHistoryScreen extends StatefulWidget {
   const InvoicesHistoryScreen({Key? key}) : super(key: key);

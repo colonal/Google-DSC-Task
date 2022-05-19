@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import 'home_screen.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 
 class OTPScreen extends StatefulWidget {
   final bool isUpdate;
@@ -23,9 +23,9 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final List images = [
-    "https://ouch-cdn2.icons8.com/R1SUR5BD6JUGreEgxYBUBw0LBJKzHeM6VTYmtfmoQRY/rs:fit:256:218/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvMzAv/MzA3NzBlMGUtZTgx/YS00MTZkLWI0ZTYt/NDU1MWEzNjk4MTlh/LnN2Zw.png",
-    "https://ouch-cdn2.icons8.com/jUVsvGx8nL0aKho6aX4TezGZa23zFoFBa9-TszvXULs/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNzkw/Lzg2NDVlNDllLTcx/ZDItNDM1NC04YjM5/LWI0MjZkZWI4M2Zk/MS5zdmc.png",
-    "https://ouch-cdn2.icons8.com/Vi8Baseh8toX5zlLptHjk5grvmTWdY-3pYT4HifsmJc/rs:fit:256:256/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvODA3/LzlkYjc1NmZlLTgz/MTctNDAzZC04NTNj/LThmZjRkNDAyZDc3/NS5zdmc.png",
+    "assets/images/1.png",
+    "assets/images/2.png",
+    "assets/images/3.png",
   ];
   bool isLogeing = false;
   bool isCheck = false;
@@ -84,7 +84,7 @@ class _OTPScreenState extends State<OTPScreen> {
                           child: AnimatedOpacity(
                             duration: const Duration(seconds: 1),
                             opacity: selectImage == i ? 1 : 0,
-                            child: Image.network(
+                            child: Image.asset(
                               images[selectImage],
                             ),
                           ),
@@ -139,15 +139,8 @@ class _OTPScreenState extends State<OTPScreen> {
                         isLogeing = !isLogeing;
                         isCheck = !isCheck;
                       });
-                      print(!error);
+                      print("error: ${error}");
                       print(screenUpdate);
-                      if (!error) {
-                        timer = Timer(const Duration(seconds: 1), () {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (_) => const HomeScreen()));
-                        });
-                      }
                     },
                     child: Container(
                       height: 50,
@@ -238,6 +231,7 @@ class _OTPScreenState extends State<OTPScreen> {
   Future<void> submit() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = FirebaseAuth.instance.currentUser;
+    print("isUpdate: $isUpdate\t!screenUpdate: ${!screenUpdate}");
     if (isUpdate && !screenUpdate) {
       UserModel _user = userModel = UserModel.fromMap(
           await firebaseFirestore.collection("users").doc(user!.uid).get());
@@ -254,6 +248,7 @@ class _OTPScreenState extends State<OTPScreen> {
       } else {
         setState(() {
           error = !error;
+          isCheck = !isCheck;
         });
       }
     } else {
@@ -262,6 +257,11 @@ class _OTPScreenState extends State<OTPScreen> {
           .doc(user!.uid)
           .update({"bin": binCode});
       userModel!.bin = binCode;
+
+      timer = Timer(const Duration(seconds: 1), () {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeScreen()));
+      });
     }
   }
 }

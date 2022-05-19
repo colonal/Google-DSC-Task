@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import 'screen/home_screen.dart';
+import 'user.dart';
+import 'model/user_model.dart';
+import 'widget/background_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'login_screen.dart';
+import 'screen/login_screen.dart';
 
 bool? isLogin;
 void main() async {
@@ -45,8 +46,10 @@ class MyApp extends StatelessWidget {
       ),
       home: isLogin == null
           ? const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
+              body: BackgroundWidget(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             )
           : isLogin!

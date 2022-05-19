@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/build_text_field_widget.dart';
-import 'package:dsc_task/button_widget.dart';
-import 'package:dsc_task/home_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../widget/build_text_field_widget.dart';
+import '../widget/button_widget.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 
 class AddFrindScreen extends StatefulWidget {
   const AddFrindScreen({Key? key}) : super(key: key);

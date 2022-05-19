@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/build_text_field_widget.dart';
-import 'package:dsc_task/home_screen.dart';
-import 'package:dsc_task/signup_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../widget/build_text_field_widget.dart';
+import 'home_screen.dart';
+import 'signup_screen.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: SizedBox(
                           height: 250,
                           width: 250,
-                          child: Image.asset("assets/images/card.png"),
+                          child: Image.asset("assets/images/login.gif"),
                         ),
                       ),
                       buildTextField(

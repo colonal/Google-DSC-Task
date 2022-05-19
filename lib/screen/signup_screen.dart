@@ -1,15 +1,15 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/build_text_field_widget.dart';
-import 'package:dsc_task/login_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../widget/build_text_field_widget.dart';
+import 'login_screen.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
+import '../widget/background_widget.dart';
 import 'otp_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -21,7 +21,8 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController nameFController = TextEditingController();
+  final TextEditingController nameLController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
@@ -38,7 +39,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    nameController.dispose();
+    nameFController.dispose();
+    nameLController.dispose();
     phoneController.dispose();
     emailController.dispose();
     passController.dispose();
@@ -61,26 +63,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 250,
                     child: Image.asset("assets/images/1.png"),
                   ),
-                  buildTextField(
-                    controller: nameController,
-                    text: "Name",
-                    prefixIcon: Icon(
-                      Icons.person,
-                      color: Colors.grey[50],
-                    ),
-                    validator: (value) {
-                      RegExp regex = RegExp(r'^.{4,}$');
-                      if (value!.isEmpty) {
-                        return ("First Name cannot be Empty");
-                      }
-                      if (!regex.hasMatch(value)) {
-                        return ("Enter Valid name(Min. 4 Character)");
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      nameController.text = value!;
-                    },
+                  Row(
+                    children: [
+                      Expanded(
+                        child: buildTextField(
+                          controller: nameFController,
+                          text: "First Name",
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Colors.grey[50],
+                          ),
+                          validator: (value) {
+                            RegExp regex = RegExp(r'^.{4,}$');
+                            if (value!.isEmpty) {
+                              return ("First Name cannot be Empty");
+                            }
+                            if (!regex.hasMatch(value)) {
+                              return ("Enter Valid name(Min. 4 Character)");
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            nameFController.text = value!;
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: buildTextField(
+                          controller: nameLController,
+                          text: "Last Name",
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: Colors.grey[50],
+                          ),
+                          validator: (value) {
+                            RegExp regex = RegExp(r'^.{4,}$');
+                            if (value!.isEmpty) {
+                              return ("Last Name cannot be Empty");
+                            }
+                            if (!regex.hasMatch(value)) {
+                              return ("Enter Valid name(Min. 4 Character)");
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            nameFController.text = value!;
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   buildTextField(
                     controller: phoneController,
@@ -192,11 +223,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 offset: const Offset(2, 3))
                           ]),
                       child: MaterialButton(
-                        onPressed: () => signUp(
-                            nameController.text,
-                            phoneController.text,
-                            emailController.text,
-                            passController.text),
+                        onPressed: () =>
+                            signUp(emailController.text, passController.text),
                         child: isLoding
                             ? const CircularProgressIndicator()
                             : const Text(
@@ -239,7 +267,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void signUp(String name, String phone, String email, String password) async {
+  void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoding = !isLoding;
@@ -302,7 +330,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       userModel = UserModel(
         email: user!.email,
         uid: user.uid,
-        name: nameController.text,
+        name:
+            "${nameFController.text[0].toUpperCase() + nameFController.text.substring(1)} ${nameLController.text[0].toUpperCase() + nameLController.text.substring(1)}",
         phone: phoneController.text,
         cardKey: genaret(),
         endDate: endDate(),

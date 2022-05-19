@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/invoice_screen.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import 'invoice_screen.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
-import 'build_text_field_widget.dart';
-import 'button_widget.dart';
+import '../widget/background_widget.dart';
+import '../widget/build_text_field_widget.dart';
+import '../widget/button_widget.dart';
 
 class SendMoneyScreen extends StatefulWidget {
   final Frinds frind;
@@ -61,7 +61,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  userModel!.cardKey!,
+                  formatcardKeyShow(userModel!.cardKey!),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 20,
@@ -109,7 +109,7 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  widget.frind.cardKey!,
+                  formatcardKeyShow(widget.frind.cardKey!),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 20,
@@ -161,8 +161,22 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
       print(moneyController.text);
       try {
         final _firestore = FirebaseFirestore.instance;
+
         final data =
             await _firestore.collection("users").doc(widget.frind.uid).get();
+        if (data["block"]) {
+          SnackBar snackBar = SnackBar(
+              backgroundColor: Colors.redAccent.withOpacity(0.8),
+              content: const Text(
+                "Error Send, Card  Friend  Block ",
+                textAlign: TextAlign.center,
+              ));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          setState(() {
+            isLoding = !isLoding;
+          });
+          return;
+        }
         double my = userModel!.money! - double.parse(moneyController.text);
         double frind = data["money"] + double.parse(moneyController.text);
 
@@ -224,5 +238,14 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
         isLoding = !isLoding;
       });
     }
+  }
+
+  String formatcardKeyShow(String number) {
+    String newKey = '';
+    for (int i = 0; i < number.length; ++i) {
+      newKey += (i % 4 == 0 && i != 0) ? "\t${number[i]}" : number[i];
+    }
+
+    return newKey;
   }
 }

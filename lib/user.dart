@@ -1,4 +1,4 @@
-import 'package:dsc_task/user_model.dart';
+import 'model/user_model.dart';
 
 UserModel? userModel;
 

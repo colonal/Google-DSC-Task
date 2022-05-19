@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../user.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'background_widget.dart';
-import 'build_text_field_widget.dart';
-import 'button_widget.dart';
+import '../widget/background_widget.dart';
+import '../widget/build_text_field_widget.dart';
+import '../widget/button_widget.dart';
 
 class ProfailScreen extends StatefulWidget {
   const ProfailScreen({Key? key}) : super(key: key);

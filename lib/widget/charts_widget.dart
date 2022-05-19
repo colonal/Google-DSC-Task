@@ -1,6 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:dsc_task/user.dart';
-import 'package:dsc_task/user_model.dart';
+import '../user.dart';
+import '../model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_common/common.dart' as common;
 
