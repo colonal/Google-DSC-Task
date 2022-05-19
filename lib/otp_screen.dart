@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen1.dart';
+import 'package:dsc_task/home_screen.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+
+import 'background_widget.dart';
 
 class OTPScreen extends StatefulWidget {
   final bool isUpdate;
@@ -63,140 +65,126 @@ class _OTPScreenState extends State<OTPScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  const Color.fromARGB(255, 23, 44, 60),
-                  Colors.black.withOpacity(0.9),
-                ])),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    SizedBox(
-                      height: size.height * 0.4,
-                      child: Stack(children: [
-                        for (var i = 0; i < images.length; ++i)
-                          Positioned(
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            child: AnimatedOpacity(
-                              duration: const Duration(seconds: 1),
-                              opacity: selectImage == i ? 1 : 0,
-                              child: Image.network(
-                                images[selectImage],
-                              ),
+      body: BackgroundWidget(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
+                  SizedBox(
+                    height: size.height * 0.4,
+                    child: Stack(children: [
+                      for (var i = 0; i < images.length; ++i)
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: AnimatedOpacity(
+                            duration: const Duration(seconds: 1),
+                            opacity: selectImage == i ? 1 : 0,
+                            child: Image.network(
+                              images[selectImage],
                             ),
                           ),
-                      ]),
+                        ),
+                    ]),
+                  ),
+                  const SizedBox(height: 50),
+                  const Text(
+                    "BIN Code",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    widget.isUpdate
+                        ? screenUpdate
+                            ? "Please enter new bin code"
+                            : "Please enter Old bin code"
+                        : "Please enter the 4 digit Number",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 18,
                     ),
-                    const SizedBox(height: 50),
-                    const Text(
-                      "BIN Code",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25),
-                    ),
-                    const SizedBox(height: 20),
+                  ),
+                  const SizedBox(height: 30),
+                  verification(),
+                  const SizedBox(height: 30),
+                  if (error)
                     Text(
-                      widget.isUpdate
-                          ? screenUpdate
-                              ? "Please enter new bin code"
-                              : "Please enter Old bin code"
-                          : "Please enter the 4 digit Number",
+                      "Error try again",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 18,
+                        color: Colors.redAccent[200],
+                        fontSize: 15,
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    verification(),
-                    const SizedBox(height: 30),
-                    if (error)
-                      Text(
-                        "Error try again",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.redAccent[200],
-                          fontSize: 15,
-                        ),
-                      ),
-                    const SizedBox(height: 50),
-                    InkWell(
-                      onTap: () async {
-                        print("onTap");
-                        setState(() {
-                          isLogeing = !isLogeing;
+                  const SizedBox(height: 50),
+                  InkWell(
+                    onTap: () async {
+                      print("onTap");
+                      setState(() {
+                        isLogeing = !isLogeing;
 
-                          error = false;
-                        });
+                        error = false;
+                      });
 
-                        await submit();
-                        setState(() {
-                          isLogeing = !isLogeing;
-                          isCheck = !isCheck;
+                      await submit();
+                      setState(() {
+                        isLogeing = !isLogeing;
+                        isCheck = !isCheck;
+                      });
+                      print(!error);
+                      print(screenUpdate);
+                      if (!error) {
+                        timer = Timer(const Duration(seconds: 1), () {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (_) => const HomeScreen()));
                         });
-                        print(!error);
-                        print(screenUpdate);
-                        if (!error) {
-                          timer = Timer(const Duration(seconds: 1), () {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_) => const HomeScreen1()));
-                          });
-                        }
-                      },
-                      child: Container(
-                        height: 50,
-                        width: size.width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  const Color.fromARGB(255, 23, 44, 60),
-                                  Colors.black.withOpacity(0.9),
-                                ])),
-                        child: Center(
-                            child: isLogeing
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
-                                : (isCheck
-                                    ? const Icon(
-                                        Icons.check_circle_rounded,
+                      }
+                    },
+                    child: Container(
+                      height: 50,
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                const Color.fromARGB(255, 23, 44, 60),
+                                Colors.black.withOpacity(0.9),
+                              ])),
+                      child: Center(
+                          child: isLogeing
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : (isCheck
+                                  ? const Icon(
+                                      Icons.check_circle_rounded,
+                                      color: Colors.white,
+                                    )
+                                  : const Text(
+                                      "Verify",
+                                      style: TextStyle(
                                         color: Colors.white,
-                                      )
-                                    : const Text(
-                                        "Verify",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ))),
-                      ),
-                    )
-                  ],
-                ),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ))),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

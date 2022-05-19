@@ -6,6 +6,10 @@ import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'background_widget.dart';
+import 'build_text_field_widget.dart';
+import 'button_widget.dart';
+
 class ProfailScreen extends StatefulWidget {
   const ProfailScreen({Key? key}) : super(key: key);
 
@@ -44,20 +48,8 @@ class _ProfailScreenState extends State<ProfailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                const Color.fromARGB(255, 23, 44, 60),
-                Colors.black.withOpacity(0.9),
-              ])),
-        ),
-        SafeArea(
+      body: BackgroundWidget(
+        child: SafeArea(
             child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -107,31 +99,13 @@ class _ProfailScreenState extends State<ProfailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  InkWell(
+                  buttonWidget(
+                    text: "Edit",
                     onTap: () {
                       setState(() {
                         enabled = !enabled;
                       });
                     },
-                    child: Container(
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Edit",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.grey[200]!,
-                            fontSize: 20,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
                   const SizedBox(height: 50),
                   buildTextField(
@@ -196,82 +170,21 @@ class _ProfailScreenState extends State<ProfailScreen> {
                     ),
                   const SizedBox(height: 30),
                   AnimatedOpacity(
-                    duration: const Duration(milliseconds: 400),
-                    opacity: enabled ? 1 : 0,
-                    child: InkWell(
-                      onTap: () {
-                        update();
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.white),
-                        ),
-                        child: Center(
-                          child: isLoding
-                              ? const CircularProgressIndicator()
-                              : Text(
-                                  "Update",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey[200]!,
-                                    fontSize: 20,
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
+                      duration: const Duration(milliseconds: 400),
+                      opacity: enabled ? 1 : 0,
+                      child: buttonWidget(
+                          text: "Update",
+                          isLoding: isLoding,
+                          onTap: () {
+                            update();
+                          })),
                   const SizedBox(height: 10),
                 ],
               ),
             ),
           ),
-        ))
-      ]),
-    );
-  }
-
-  Padding buildTextField(
-      {TextEditingController? controller,
-      String? text,
-      Widget? prefixIcon,
-      bool isPass = false,
-      TextInputType? keyboardType,
-      String? Function(String?)? validator,
-      Function(String?)? onSaved}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-          enabled: enabled,
-          controller: controller,
-          keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            prefixIconColor: Colors.grey[50],
-            labelText: text,
-            labelStyle: TextStyle(color: Colors.grey[50]),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 1),
-            ),
-          ),
-          obscureText: isPass,
-          validator: validator,
-          onSaved: onSaved),
+        )),
+      ),
     );
   }
 

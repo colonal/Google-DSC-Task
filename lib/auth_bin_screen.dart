@@ -5,6 +5,7 @@ import 'package:dsc_task/user_model.dart';
 import 'package:flutter/material.dart';
 
 import 'add_frind_screen.dart';
+import 'background_widget.dart';
 import 'send_money_screen.dart';
 
 class AuthBinScreen extends StatefulWidget {
@@ -42,111 +43,97 @@ class _AuthBinScreenState extends State<AuthBinScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  const Color.fromARGB(255, 23, 44, 60),
-                  Colors.black.withOpacity(0.9),
-                ])),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50),
-                    child: Text(
-                      "Bin Number Verification",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
-                    ),
+      body: BackgroundWidget(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 50),
+                  child: Text(
+                    "Bin Number Verification",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold),
                   ),
-                  isAnimation
-                      ? SizedBox(
-                          width: double.infinity,
-                          child: AlignTransition(
-                            alignment: _animation,
-                            child: newMethod(context),
-                          ),
-                        )
-                      : newMethod(context),
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _number("1"),
-                          _number("2"),
-                          _number("3"),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _number("4"),
-                          _number("5"),
-                          _number("6"),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _number("7"),
-                          _number("8"),
-                          _number("9"),
-                        ],
-                      ),
-                      const SizedBox(height: 40),
-                      Stack(
-                        alignment: Alignment.centerRight,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(),
-                              _number("0"),
-                              Container(),
-                            ],
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                if (binCode.isNotEmpty) {
-                                  binCode =
-                                      binCode.substring(0, binCode.length - 1);
-                                  isError = false;
-                                  setState(() {});
-                                }
-                              },
-                              icon: Icon(Icons.backspace_outlined,
-                                  color: Colors.white.withOpacity(0.8)))
-                        ],
+                ),
+                isAnimation
+                    ? SizedBox(
+                        width: double.infinity,
+                        child: AlignTransition(
+                          alignment: _animation,
+                          child: buildInputBin(context),
+                        ),
                       )
-                    ],
-                  ),
-                ],
-              ),
+                    : buildInputBin(context),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _number("1"),
+                        _number("2"),
+                        _number("3"),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _number("4"),
+                        _number("5"),
+                        _number("6"),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _number("7"),
+                        _number("8"),
+                        _number("9"),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    Stack(
+                      alignment: Alignment.centerRight,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(),
+                            _number("0"),
+                            Container(),
+                          ],
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              if (binCode.isNotEmpty) {
+                                binCode =
+                                    binCode.substring(0, binCode.length - 1);
+                                isError = false;
+                                setState(() {});
+                              }
+                            },
+                            icon: Icon(Icons.backspace_outlined,
+                                color: Colors.white.withOpacity(0.8)))
+                      ],
+                    )
+                  ],
+                ),
+              ],
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
 
-  SizedBox newMethod(BuildContext context) {
+  SizedBox buildInputBin(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width - 100,
       child: Row(
@@ -162,29 +149,35 @@ class _AuthBinScreenState extends State<AuthBinScreen>
   }
 
   Widget _number(String text) {
-    return MaterialButton(
-      onPressed: () {
-        if (binCode.length < 4) {
-          binCode += text;
+    return Container(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+      ),
+      child: MaterialButton(
+        onPressed: () {
+          if (binCode.length < 4) {
+            binCode += text;
 
-          if (binCode.length == 4) {
-            if (userModel!.bin != binCode) {
-              isError = true;
-              runAnimation();
-            } else {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (_) => SendMoneyScreen(frind: widget.frind),
-              ));
+            if (binCode.length == 4) {
+              if (userModel!.bin != binCode) {
+                isError = true;
+                runAnimation();
+              } else {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (_) => SendMoneyScreen(frind: widget.frind),
+                ));
+              }
             }
+            setState(() {});
           }
-          setState(() {});
-        }
-      },
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-            color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+        },
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

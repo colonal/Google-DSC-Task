@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen1.dart';
+import 'package:dsc_task/home_screen.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
             )
           : isLogin!
               ? const LoginScreen()
-              : const HomeScreen1(),
+              : const HomeScreen(),
     );
   }
 }

@@ -4,7 +4,9 @@ import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
 import 'package:flutter/material.dart';
 
+import 'background_widget.dart';
 import 'build_text_field_widget.dart';
+import 'button_widget.dart';
 
 class SendMoneyScreen extends StatefulWidget {
   final Frinds frind;
@@ -21,166 +23,132 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                  const Color.fromARGB(255, 23, 44, 60),
-                  Colors.black.withOpacity(0.9),
-                ])),
-          ),
-          SafeArea(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.arrow_back_ios_new_outlined,
-                            color: Colors.white.withOpacity(0.6)),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+      body: BackgroundWidget(
+        child: SafeArea(
+            child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new_outlined,
+                          color: Colors.white.withOpacity(0.6)),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    Text(
+                      "Send Money",
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(1),
+                        fontSize: 18,
                       ),
-                      Text(
-                        "Send Money",
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(1),
-                          fontSize: 18,
-                        ),
-                      ),
-                      Container(),
-                    ],
-                  ),
-                  const SizedBox(height: 50),
-                  Text(
-                    "My Acount",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(1),
-                      fontSize: 18,
                     ),
+                    Container(),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                Text(
+                  "My Acount",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(1),
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    userModel!.cardKey!,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 20,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  userModel!.cardKey!,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 20,
                   ),
-                  const SizedBox(height: 50),
-                  Text(
-                    "Available Balance",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(1),
-                      fontSize: 18,
-                    ),
+                ),
+                const SizedBox(height: 50),
+                Text(
+                  "Available Balance",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(1),
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${userModel!.money!}\$",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 20,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "${userModel!.money!}\$",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 20,
                   ),
-                  const SizedBox(height: 50),
-                  Text(
-                    "Send To",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(1),
-                      fontSize: 18,
-                    ),
+                ),
+                const SizedBox(height: 50),
+                Text(
+                  "Send To",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(1),
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    widget.frind.name!,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 20,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.frind.name!,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 20,
                   ),
-                  const SizedBox(height: 50),
-                  Text(
-                    "Card",
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(1),
-                      fontSize: 18,
-                    ),
+                ),
+                const SizedBox(height: 50),
+                Text(
+                  "Card",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(1),
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    widget.frind.cardKey!,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 20,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.frind.cardKey!,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 20,
                   ),
-                  const SizedBox(height: 50),
-                  Form(
-                    key: _formKey,
-                    child: buildTextField(
-                      text: "Amount",
-                      controller: moneyController,
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return ("Please Enter Your amount");
-                        }
+                ),
+                const SizedBox(height: 50),
+                Form(
+                  key: _formKey,
+                  child: buildTextField(
+                    text: "Amount",
+                    controller: moneyController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return ("Please Enter Your amount");
+                      }
 
-                        if (double.parse(value) > (userModel!.money ?? 0)) {
-                          return ("Please Enter a valid amount");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        moneyController.text =
-                            value!; // GETTING the value of edit text
-                      },
-                    ),
+                      if (double.parse(value) > (userModel!.money ?? 0)) {
+                        return ("Please Enter a valid amount");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      moneyController.text =
+                          value!; // GETTING the value of edit text
+                    },
                   ),
-                  const SizedBox(height: 50),
-                  InkWell(
+                ),
+                const SizedBox(height: 50),
+                buttonWidget(
+                    text: "Send",
+                    isLoding: isLoding,
                     onTap: () {
                       _send();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white),
-                      ),
-                      child: Center(
-                        child: isLoding
-                            ? const CircularProgressIndicator.adaptive()
-                            : Text(
-                                "Send",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.grey[200]!,
-                                  fontSize: 20,
-                                  letterSpacing: 2,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                    }),
+              ],
             ),
-          ))
-        ],
+          ),
+        )),
       ),
     );
   }

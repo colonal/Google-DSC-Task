@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dsc_task/home_screen1.dart';
+import 'package:dsc_task/build_text_field_widget.dart';
+import 'package:dsc_task/home_screen.dart';
 import 'package:dsc_task/signup_screen.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
+import 'background_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -35,187 +36,136 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Colors.black.withOpacity(1),
-              Colors.black.withOpacity(0.8),
-            ])),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Bank.",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(.9),
-                            fontSize: 40,
-                          ),
+      body: BackgroundWidget(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Bank.",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(.9),
+                          fontSize: 40,
                         ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: SizedBox(
-                            height: 250,
-                            width: 250,
-                            child: Image.asset("assets/images/card.png"),
-                          ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 250,
+                          width: 250,
+                          child: Image.asset("assets/images/card.png"),
                         ),
-                        buildTextField(
-                          text: "Email Address",
-                          keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return ("Please Enter Your Email");
-                            }
+                      ),
+                      buildTextField(
+                        text: "Email Address",
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return ("Please Enter Your Email");
+                          }
 
-                            if (!RegExp(
-                                    "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                                .hasMatch(value)) {
-                              return ("Please Enter a valid email");
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            emailController.text =
-                                value!; // GETTING the value of edit text
-                          },
+                          if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                              .hasMatch(value)) {
+                            return ("Please Enter a valid email");
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          emailController.text =
+                              value!; // GETTING the value of edit text
+                        },
+                      ),
+                      buildTextField(
+                        text: "Password",
+                        keyboardType: TextInputType.visiblePassword,
+                        controller: passController,
+                        isPass: true,
+                        validator: (value) {
+                          RegExp regex = RegExp(r'^.{6,}$');
+                          if (value!.isEmpty) {
+                            return ("Password is required for login");
+                          }
+                          if (!regex.hasMatch(value)) {
+                            return ("Enter Valid Password(Min. 6 Character)");
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          passController.text = value!;
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: double.infinity,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.grey[700]!,
+                                  Colors.grey[900]!,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(4),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.white.withOpacity(0.3),
+                                    offset: const Offset(2, 3))
+                              ]),
+                          child: MaterialButton(
+                            onPressed: () => signIn(
+                                emailController.text, passController.text),
+                            // color: Colors.black,
+                            child: isLoding
+                                ? const CircularProgressIndicator()
+                                : const Text(
+                                    "Login",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20),
+                                  ),
+                          ),
                         ),
-                        buildTextField(
-                          text: "Password",
-                          keyboardType: TextInputType.visiblePassword,
-                          controller: passController,
-                          isPass: true,
-                          validator: (value) {
-                            RegExp regex = RegExp(r'^.{6,}$');
-                            if (value!.isEmpty) {
-                              return ("Password is required for login");
-                            }
-                            if (!regex.hasMatch(value)) {
-                              return ("Enter Valid Password(Min. 6 Character)");
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            passController.text = value!;
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: 50,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.grey[700]!,
-                                    Colors.grey[900]!,
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(4),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.white.withOpacity(0.3),
-                                      offset: const Offset(2, 3))
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: RichText(
+                            text: TextSpan(
+                                text: "Dont have an account? ",
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 15),
+                                children: [
+                                  TextSpan(
+                                      text: "Sign Up",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      const SignUpScreen()));
+                                        }),
                                 ]),
-                            child: MaterialButton(
-                              onPressed: () => signIn(
-                                  emailController.text, passController.text),
-                              // color: Colors.black,
-                              child: isLoding
-                                  ? const CircularProgressIndicator()
-                                  : const Text(
-                                      "Login",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20),
-                                    ),
-                            ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: RichText(
-                              text: TextSpan(
-                                  text: "Dont have an account? ",
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 15),
-                                  children: [
-                                    TextSpan(
-                                        text: "Sign Up",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                        ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        const SignUpScreen()));
-                                          }),
-                                  ]),
-                            ),
-                          ),
-                        ),
-                      ]),
-                ),
+                      ),
+                    ]),
               ),
             ),
           ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Padding buildTextField(
-      {TextEditingController? controller,
-      String? text,
-      Widget? prefixIcon,
-      bool isPass = false,
-      TextInputType? keyboardType,
-      String? Function(String?)? validator,
-      Function(String?)? onSaved}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            prefixIconColor: Colors.grey[50],
-            labelText: text,
-            labelStyle: TextStyle(color: Colors.grey[50]),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 1),
-            ),
-          ),
-          obscureText: isPass,
-          validator: validator,
-          onSaved: onSaved),
     );
   }
 
@@ -231,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
         userModel = UserModel.fromMap(
             await get.collection("users").doc(uid.user!.uid).get());
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const HomeScreen1()));
+            .push(MaterialPageRoute(builder: (_) => const HomeScreen()));
       }).catchError((error) {
         try {
           switch (error.code) {

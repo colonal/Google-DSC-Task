@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dsc_task/build_text_field_widget.dart';
 import 'package:dsc_task/login_screen.dart';
 import 'package:dsc_task/user.dart';
 import 'package:dsc_task/user_model.dart';
@@ -8,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'background_widget.dart';
 import 'otp_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -46,244 +48,194 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              Colors.black.withOpacity(1),
-              Colors.black.withOpacity(0.8),
-            ])),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(children: [
-                    SizedBox(
-                      height: 250,
-                      width: 250,
-                      child: Image.asset("assets/images/1.png"),
+      body: BackgroundWidget(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Form(
+                key: _formKey,
+                child: Column(children: [
+                  SizedBox(
+                    height: 250,
+                    width: 250,
+                    child: Image.asset("assets/images/1.png"),
+                  ),
+                  buildTextField(
+                    controller: nameController,
+                    text: "Name",
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.grey[50],
                     ),
-                    buildTextField(
-                      controller: nameController,
-                      text: "Name",
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: Colors.grey[50],
-                      ),
-                      validator: (value) {
-                        RegExp regex = RegExp(r'^.{4,}$');
-                        if (value!.isEmpty) {
-                          return ("First Name cannot be Empty");
-                        }
-                        if (!regex.hasMatch(value)) {
-                          return ("Enter Valid name(Min. 4 Character)");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        nameController.text = value!;
-                      },
+                    validator: (value) {
+                      RegExp regex = RegExp(r'^.{4,}$');
+                      if (value!.isEmpty) {
+                        return ("First Name cannot be Empty");
+                      }
+                      if (!regex.hasMatch(value)) {
+                        return ("Enter Valid name(Min. 4 Character)");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      nameController.text = value!;
+                    },
+                  ),
+                  buildTextField(
+                    controller: phoneController,
+                    text: 'Phone',
+                    prefixIcon: Icon(
+                      Icons.phone,
+                      color: Colors.grey[50],
                     ),
-                    buildTextField(
-                      controller: phoneController,
-                      text: 'Phone',
-                      prefixIcon: Icon(
-                        Icons.phone,
-                        color: Colors.grey[50],
-                      ),
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return ("Please Enter Your Phone");
-                        }
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return ("Please Enter Your Phone");
+                      }
 
-                        if (!RegExp(r"[0-9].{8,8}$").hasMatch(value)) {
-                          return ("Please Enter a valid Phone");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        phoneController.text =
-                            value!; // GETTING the value of edit text
-                      },
+                      if (!RegExp(r"[0-9].{8,8}$").hasMatch(value)) {
+                        return ("Please Enter a valid Phone");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      phoneController.text =
+                          value!; // GETTING the value of edit text
+                    },
+                  ),
+                  buildTextField(
+                    controller: emailController,
+                    text: "Email Address",
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Colors.grey[50],
                     ),
-                    buildTextField(
-                      controller: emailController,
-                      text: "Email Address",
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.grey[50],
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return ("Please Enter Your Email");
-                        }
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return ("Please Enter Your Email");
+                      }
 
-                        if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-                            .hasMatch(value)) {
-                          return ("Please Enter a valid email");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        emailController.text =
-                            value!; // GETTING the value of edit text
-                      },
+                      if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                          .hasMatch(value)) {
+                        return ("Please Enter a valid email");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      emailController.text =
+                          value!; // GETTING the value of edit text
+                    },
+                  ),
+                  buildTextField(
+                    controller: passController,
+                    text: "Password",
+                    prefixIcon: Icon(
+                      Icons.password,
+                      color: Colors.grey[50],
                     ),
-                    buildTextField(
-                      controller: passController,
-                      text: "Password",
-                      prefixIcon: Icon(
-                        Icons.password,
-                        color: Colors.grey[50],
-                      ),
-                      keyboardType: TextInputType.visiblePassword,
-                      isPass: true,
-                      validator: (value) {
-                        RegExp regex = RegExp(r'^.{6,}$');
-                        if (value!.isEmpty) {
-                          return ("Password is required for login");
-                        }
-                        if (!regex.hasMatch(value)) {
-                          return ("Enter Valid Password(Min. 6 Character)");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        passController.text = value!;
-                      },
+                    keyboardType: TextInputType.visiblePassword,
+                    isPass: true,
+                    validator: (value) {
+                      RegExp regex = RegExp(r'^.{6,}$');
+                      if (value!.isEmpty) {
+                        return ("Password is required for login");
+                      }
+                      if (!regex.hasMatch(value)) {
+                        return ("Enter Valid Password(Min. 6 Character)");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      passController.text = value!;
+                    },
+                  ),
+                  buildTextField(
+                    text: "RePassword",
+                    prefixIcon: Icon(
+                      Icons.password,
+                      color: Colors.grey[50],
                     ),
-                    buildTextField(
-                      text: "RePassword",
-                      prefixIcon: Icon(
-                        Icons.password,
-                        color: Colors.grey[50],
-                      ),
-                      keyboardType: TextInputType.visiblePassword,
-                      isPass: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return ("Password is required for login");
-                        }
-                        if (passController.text != value) {
-                          return ("Not Match");
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        passController.text = value!;
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.grey[700]!,
-                                Colors.grey[900]!,
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(4),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.white.withOpacity(0.3),
-                                  offset: const Offset(2, 3))
-                            ]),
-                        child: MaterialButton(
-                          onPressed: () => signUp(
-                              nameController.text,
-                              phoneController.text,
-                              emailController.text,
-                              passController.text),
-                          child: isLoding
-                              ? const CircularProgressIndicator()
-                              : const Text(
-                                  "Sign Up",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RichText(
-                        text: TextSpan(
-                            text: "have an account? ",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                            ),
-                            children: [
-                              TextSpan(
-                                  text: "Login",
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 15),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const LoginScreen()));
-                                    }),
-                            ]),
+                    keyboardType: TextInputType.visiblePassword,
+                    isPass: true,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return ("Password is required for login");
+                      }
+                      if (passController.text != value) {
+                        return ("Not Match");
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      passController.text = value!;
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.grey[700]!,
+                              Colors.grey[900]!,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.white.withOpacity(0.3),
+                                offset: const Offset(2, 3))
+                          ]),
+                      child: MaterialButton(
+                        onPressed: () => signUp(
+                            nameController.text,
+                            phoneController.text,
+                            emailController.text,
+                            passController.text),
+                        child: isLoding
+                            ? const CircularProgressIndicator()
+                            : const Text(
+                                "Sign Up",
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
                     ),
-                  ]),
-                ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RichText(
+                      text: TextSpan(
+                          text: "have an account? ",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15,
+                          ),
+                          children: [
+                            TextSpan(
+                                text: "Login",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                const LoginScreen()));
+                                  }),
+                          ]),
+                    ),
+                  ),
+                ]),
               ),
             ),
           ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Padding buildTextField(
-      {TextEditingController? controller,
-      String? text,
-      Widget? prefixIcon,
-      bool isPass = false,
-      TextInputType? keyboardType,
-      String? Function(String?)? validator,
-      Function(String?)? onSaved}) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            prefixIconColor: Colors.grey[50],
-            labelText: text,
-            labelStyle: TextStyle(color: Colors.grey[50]),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide:
-                  BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.white, width: 1),
-            ),
-          ),
-          obscureText: isPass,
-          validator: validator,
-          onSaved: onSaved),
     );
   }
 
