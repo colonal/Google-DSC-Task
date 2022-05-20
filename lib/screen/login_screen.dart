@@ -21,7 +21,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
-  // UserModel userModel = UserModel();
 
   bool isLoding = false;
 
@@ -78,8 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                         onSaved: (value) {
-                          emailController.text =
-                              value!; // GETTING the value of edit text
+                          emailController.text = value!;
                         },
                       ),
                       buildTextField(
@@ -221,7 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         } catch (_) {
-          print(error.toString());
           SnackBar snackBar = SnackBar(
               backgroundColor: Colors.red.withOpacity(0.8),
               content: Text(

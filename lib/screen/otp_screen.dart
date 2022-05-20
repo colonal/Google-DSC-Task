@@ -127,7 +127,6 @@ class _OTPScreenState extends State<OTPScreen> {
                   const SizedBox(height: 50),
                   InkWell(
                     onTap: () async {
-                      print("onTap");
                       setState(() {
                         isLogeing = !isLogeing;
 
@@ -139,8 +138,6 @@ class _OTPScreenState extends State<OTPScreen> {
                         isLogeing = !isLogeing;
                         isCheck = !isCheck;
                       });
-                      print("error: ${error}");
-                      print(screenUpdate);
                     },
                     child: Container(
                       height: 50,
@@ -231,7 +228,6 @@ class _OTPScreenState extends State<OTPScreen> {
   Future<void> submit() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = FirebaseAuth.instance.currentUser;
-    print("isUpdate: $isUpdate\t!screenUpdate: ${!screenUpdate}");
     if (isUpdate && !screenUpdate) {
       UserModel _user = userModel = UserModel.fromMap(
           await firebaseFirestore.collection("users").doc(user!.uid).get());

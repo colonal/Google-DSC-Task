@@ -180,7 +180,6 @@ class _AddFrindScreenState extends State<AddFrindScreen> {
       if (value.docs.isNotEmpty) {
         value.docs.forEach(
           ((element) async {
-            print("element: ${element["uid"]}");
             element["uid"];
             Frinds frind = Frinds.fromMap(element, name: nameController.text);
             await _firestore

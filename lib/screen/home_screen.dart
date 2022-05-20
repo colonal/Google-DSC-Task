@@ -16,7 +16,6 @@ import '../widget/background_widget.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  // UserModel userModel;
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -41,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("frinds!.length: ${frinds!.length}");
     return Scaffold(
       body: BackgroundWidget(
         child: SafeArea(
@@ -247,7 +245,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (_) => const AddFrindScreen(),
                           ))
                               .then((value) {
-                            _gitFrinds();
+                            setState(() {
+                              isLoding = !isLoding;
+                            });
+                            _gitFrinds().then((value) => setState(() {
+                                  isLoding = !isLoding;
+                                }));
                           });
                         },
                         child: Container(
@@ -368,6 +371,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onTap: () {
                       FirebaseAuth.instance.signOut();
+                      frinds!.clear();
+                      invoices!.clear();
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (_) => const LoginScreen()));
                     },
@@ -489,7 +494,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onRefresh() async {
-    print("onRefresh");
     setState(() {
       isLoding = !isLoding;
     });

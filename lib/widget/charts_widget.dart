@@ -34,17 +34,18 @@ class SimpleTimeSeriesChart extends StatelessWidget {
             invoices!.map((Invoice element) {
               List date = element.date!.split(" ")[0].split("/");
               List time = element.date!.split(" ")[1].split(":");
-              String money = element.money!.substring(1, element.money!.length);
 
               return charts.TickSpec<DateTime>(
-                DateTime(
-                  int.parse(date[2]),
-                  int.parse(date[0]),
-                  int.parse(date[1]),
-                  int.parse(time[0]),
-                  int.parse(time[1]),
-                ),
-              );
+                  DateTime(
+                    int.parse(date[2]),
+                    int.parse(date[0]),
+                    int.parse(date[1]),
+                    int.parse(time[0]),
+                    int.parse(time[1]),
+                  ),
+                  style: charts.TextStyleSpec(
+                      color: charts.ColorUtil.fromDartColor(
+                          Colors.white.withOpacity(0.7))));
             }).toList(),
           ),
           tickFormatterSpec: const charts.AutoDateTimeTickFormatterSpec(
@@ -62,9 +63,7 @@ class SimpleTimeSeriesChart extends StatelessWidget {
       ...invoices!.map((Invoice element) {
         List date = element.date!.split(" ")[0].split("/");
         List time = element.date!.split(" ")[1].split(":");
-        String money = element.money!.substring(1, element.money!.length);
-        print(
-            "money: $money\tdate: ${DateTime(int.parse(date[2]), int.parse(date[0]), int.parse(date[1]), int.parse(time[0]), int.parse(time[1]))}");
+        String money = element.money!; //.substring(1, element.money!.length);
         return TimeSeriesSales(
             DateTime(
               int.parse(date[2]),

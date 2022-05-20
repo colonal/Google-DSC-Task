@@ -158,7 +158,6 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
       setState(() {
         isLoding = !isLoding;
       });
-      print(moneyController.text);
       try {
         final _firestore = FirebaseFirestore.instance;
 

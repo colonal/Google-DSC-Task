@@ -15,10 +15,8 @@ void main() async {
   await Firebase.initializeApp();
   FirebaseAuth.instance.authStateChanges().listen((User? user) async {
     if (user == null) {
-      print('User is currently signed out!');
       isLogin = true;
     } else {
-      print('User is signed in!');
       try {
         final get = FirebaseFirestore.instance;
         userModel = UserModel.fromMap(
@@ -27,7 +25,6 @@ void main() async {
       } catch (_) {
         isLogin = true;
       }
-      print("Home >>>>");
     }
     runApp(const MyApp());
   });

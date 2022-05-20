@@ -302,8 +302,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           default:
             errorMessage = "An undefined Error happened.";
         }
-        // Fluttertoast.showToast(msg: errorMessage!);
-        print("error: " + error.toString());
 
         setState(() {
           isLoding = !isLoding;
@@ -320,13 +318,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   postDetailsToFirestore() async {
-    // calling our firestore
-    // calling our user model
-    // sedning these values
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
     try {
-      // writing all the values
       userModel = UserModel(
         email: user!.email,
         uid: user.uid,
@@ -338,9 +332,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         money: 500.0,
         block: false,
       );
-    } catch (e) {
-      print("E: $e");
-    }
+    } catch (_) {}
     await firebaseFirestore
         .collection("users")
         .doc(user!.uid)

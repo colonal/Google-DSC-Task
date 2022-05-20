@@ -39,18 +39,31 @@ class _InvoicesHistoryScreenState extends State<InvoicesHistoryScreen> {
                   child: SimpleTimeSeriesChart.withSampleData(),
                 ),
                 const SizedBox(height: 50),
-                ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: invoices!.length,
-                    separatorBuilder: (_, __) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Divider(
-                              color: Colors.grey.withOpacity(0.7), height: 2),
+                invoices!.isEmpty
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "There are no invoices",
+                          style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 18),
+                          textAlign: TextAlign.center,
                         ),
-                    itemBuilder: (context, index) {
-                      return newMethod(invoices![index]);
-                    })
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: invoices!.length,
+                        separatorBuilder: (_, __) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              child: Divider(
+                                  color: Colors.grey.withOpacity(0.7),
+                                  height: 2),
+                            ),
+                        itemBuilder: (context, index) {
+                          return newMethod(
+                              invoices![invoices!.length - 1 - index]);
+                        })
               ],
             ),
           ),
@@ -123,7 +136,6 @@ class _InvoicesHistoryScreenState extends State<InvoicesHistoryScreen> {
           ),
         ],
       ),
-      onTap: () {},
     );
   }
 }
