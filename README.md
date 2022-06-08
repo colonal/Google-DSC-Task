@@ -28,7 +28,7 @@ Run App
 ```
 flutter run
 ```
----
+--- 
 
 # ScreenShot
 <img src="screenshot/1.png" height="500em"/> <img src="screenshot/2.png" height="500em"/>
